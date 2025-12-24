@@ -10,6 +10,12 @@ screen.tracer(0)
 
 sanke = Sanke()
 
+screen.listen()
+screen.onkey(sanke.up, "Up")
+screen.onkey(sanke.down, "Down")
+screen.onkey(sanke.right, "Right")
+screen.onkey(sanke.left, "Left")
+
 game_is_on = True
 while game_is_on:
     screen.update()
