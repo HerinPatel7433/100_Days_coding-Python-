@@ -6,14 +6,14 @@ DOWN = 270
 LEFT = 180
 RIGHT = 0
 
-class Sanke:
+class Snake:
 
     def __init__(self):
         self.segments = []
-        self.create_sanke()
+        self.create_snake()
         self.head = self.segments[0]
 
-    def create_sanke(self):
+    def create_snake(self):
         for position in STARTING_POSTIONS:
             new_segment = t.Turtle("square")
             new_segment.color("white")
