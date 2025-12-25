@@ -4,29 +4,38 @@ from ball import Ball
 from scoreboard import Scoreboard
 import time
 
-Screen = Screen()
-Screen.bgcolor("black")
-Screen.setup(width=800, height=600)
-Screen.title("Pong")
-Screen.tracer(0)
+screen = Screen()
+screen.bgcolor("black")
+screen.setup(width=800, height=600)
+screen.title("Pong")
+screen.tracer(0)
 
 r_paddle = Paddle((350, 0))
 l_paddle = Paddle((-350, 0))
 ball = Ball()
 scoreboard = Scoreboard()
 
-Screen.listen()
-Screen.onkey(r_paddle.go_up, "Up")
-Screen.onkey(r_paddle.go_down, "Down")
-Screen.onkey(l_paddle.go_up, "w")
-Screen.onkey(l_paddle.go_down, "s")
+screen.listen()
 
+screen.onkeypress(r_paddle.start_up, "Up")
+screen.onkeyrelease(r_paddle.stop, "Up")
+
+screen.onkeypress(r_paddle.start_down, "Down")
+screen.onkeyrelease(r_paddle.stop, "Down")
+
+screen.onkeypress(l_paddle.start_up, "w")
+screen.onkeyrelease(l_paddle.stop, "w")
+
+screen.onkeypress(l_paddle.start_down, "s")
+screen.onkeyrelease(l_paddle.stop, "s")
 
 game_is_on = True
 while game_is_on:
-    time.sleep(0.1)
-    Screen.update()
+    time.sleep(ball.move_speed)
+    screen.update()
     ball.move()
+    r_paddle.move()
+    l_paddle.move()
 
     if ball.ycor() > 280 or ball.ycor() < -280:
         ball.bounce_y()
@@ -42,4 +51,4 @@ while game_is_on:
         ball.reset_position()
         scoreboard.r_point()
 
-Screen.exitonclick()
+screen.exitonclick()
