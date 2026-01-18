@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import pyperclip
-
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
@@ -30,19 +30,45 @@ def save_password():
     email = email_entry.get()
     password = password_entry.get()
 
-    if not website or not email or not password:
-        messagebox.showwarning(title="Oops!", message="Please don't leave any fields empty.")
+    if not website or not password:
+        messagebox.showinfo(
+            title="Oops",
+            message="Please make sure you haven't left any fields empty."
+        )
         return
 
-    if messagebox.askokcancel(
-        title=website,
-        message=f"Email: {email}\nPassword: {password}\n\nSave?"
-    ):
-        with open("Day-29//data.txt", "a") as file:
-            file.write(f"{website} | {email} | {password}\n")
+    new_data = {
+        website: {
+            "email": email,
+            "password": password,
+        }
+    }
 
-        website_entry.delete(0, tk.END)
-        password_entry.delete(0, tk.END)
+    is_ok = messagebox.askokcancel(
+        title=website,
+        message=f"These are the details entered:\n\n"
+                f"Email: {email}\n"
+                f"Password: {password}\n\n"
+                f"Save details?"
+    )
+
+    if not is_ok:
+        return
+
+    try:
+        with open("Day-29/data.json", "r") as data_file:
+            data = json.load(data_file)
+
+    except FileNotFoundError:
+        data = {}
+
+    data.update(new_data)
+
+    with open("Day-29/data.json", "w") as data_file:
+        json.dump(data, data_file, indent=4)
+
+    website_entry.delete(0, tk.END)
+    password_entry.delete(0, tk.END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -61,32 +87,27 @@ canvas.create_image(100, 100, image=lock_img)
 canvas.grid(column=0, row=0, columnspan=3, pady=(0, 10))
 
 # Labels
-website_label = tk.Label(text="Website:")
-website_label.grid(column=0, row=1, sticky="e", padx=(0, 10), pady=5)
-
-email_label = tk.Label(text="Email / Username:")
-email_label.grid(column=0, row=2, sticky="e", padx=(0, 10), pady=5)
-
-password_label = tk.Label(text="Password:")
-password_label.grid(column=0, row=3, sticky="e", padx=(0, 10), pady=5)
+tk.Label(text="Website:").grid(column=0, row=1, sticky="e", padx=(0, 10))
+tk.Label(text="Email / Username:").grid(column=0, row=2, sticky="e", padx=(0, 10))
+tk.Label(text="Password:").grid(column=0, row=3, sticky="e", padx=(0, 10))
 
 # Entries
 website_entry = tk.Entry(width=32)
-website_entry.grid(column=1, row=1, sticky="ew", pady=5)
+website_entry.grid(column=1, row=1, sticky="ew")
 website_entry.focus()
 
 email_entry = tk.Entry(width=32)
-email_entry.grid(column=1, row=2, columnspan=2, sticky="ew", pady=5)
-email_entry.insert(0, "example@email.com")
+email_entry.grid(column=1, row=2, columnspan=2, sticky="ew")
+email_entry.insert(0, "herinpatel6747@gmail.com")
 
 password_entry = tk.Entry(width=21)
-password_entry.grid(column=1, row=3, sticky="ew", pady=5)
+password_entry.grid(column=1, row=3, sticky="ew")
 
 # Buttons
-generate_password_btn = tk.Button(text="Generate", command=generate_password)
-generate_password_btn.grid(column=2, row=3, padx=(10, 0), pady=5)
+tk.Button(text="Generate", command=generate_password)\
+    .grid(column=2, row=3, padx=(10, 0))
 
-add_button = tk.Button(text="Add", width=36, command=save_password)
-add_button.grid(column=0, row=4, columnspan=3, pady=(10, 0))
+tk.Button(text="Add", width=36, command=save_password)\
+    .grid(column=0, row=4, columnspan=3, pady=(10, 0))
 
 window.mainloop()
