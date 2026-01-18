@@ -31,44 +31,55 @@ def save_password():
     password = password_entry.get()
 
     if not website or not password:
-        messagebox.showinfo(
-            title="Oops",
-            message="Please make sure you haven't left any fields empty."
-        )
+        messagebox.showinfo(title="Oops", message="Please make sure no fields are empty.")
         return
 
     new_data = {
         website: {
             "email": email,
-            "password": password,
+            "password": password
         }
     }
 
-    is_ok = messagebox.askokcancel(
-        title=website,
-        message=f"These are the details entered:\n\n"
-                f"Email: {email}\n"
-                f"Password: {password}\n\n"
-                f"Save details?"
-    )
-
-    if not is_ok:
-        return
-
     try:
-        with open("Day-29/data.json", "r") as data_file:
-            data = json.load(data_file)
-
+        with open("Day-29/data.json", "r") as file:
+            data = json.load(file)
     except FileNotFoundError:
         data = {}
 
     data.update(new_data)
 
-    with open("Day-29/data.json", "w") as data_file:
-        json.dump(data, data_file, indent=4)
+    with open("Day-29/data.json", "w") as file:
+        json.dump(data, file, indent=4)
 
     website_entry.delete(0, tk.END)
     password_entry.delete(0, tk.END)
+
+
+# ---------------------------- SEARCH PASSWORD ------------------------------- #
+def search_password():
+    website = website_entry.get()
+
+    if not website:
+        messagebox.showinfo(title="Error", message="Please enter a website name.")
+        return
+
+    try:
+        with open("Day-29/data.json", "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="No data file found.")
+        return
+
+    if website in data:
+        email = data[website]["email"]
+        password = data[website]["password"]
+        messagebox.showinfo(
+            title=website,
+            message=f"Email: {email}\nPassword: {password}"
+        )
+    else:
+        messagebox.showinfo(title="Not Found", message="Website not found.")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -76,23 +87,19 @@ window = tk.Tk()
 window.title("Password Manager")
 window.config(padx=25, pady=25)
 
-window.columnconfigure(0, weight=0)
-window.columnconfigure(1, weight=1)
-window.columnconfigure(2, weight=0)
-
 # Logo
 canvas = tk.Canvas(width=200, height=200, highlightthickness=0)
 lock_img = tk.PhotoImage(file="Day-29\\logo.png")
 canvas.create_image(100, 100, image=lock_img)
-canvas.grid(column=0, row=0, columnspan=3, pady=(0, 10))
+canvas.grid(column=0, row=0, columnspan=3)
 
 # Labels
-tk.Label(text="Website:").grid(column=0, row=1, sticky="e", padx=(0, 10))
-tk.Label(text="Email / Username:").grid(column=0, row=2, sticky="e", padx=(0, 10))
-tk.Label(text="Password:").grid(column=0, row=3, sticky="e", padx=(0, 10))
+tk.Label(text="Website:").grid(column=0, row=1, sticky="e")
+tk.Label(text="Email / Username:").grid(column=0, row=2, sticky="e")
+tk.Label(text="Password:").grid(column=0, row=3, sticky="e")
 
 # Entries
-website_entry = tk.Entry(width=32)
+website_entry = tk.Entry(width=21)
 website_entry.grid(column=1, row=1, sticky="ew")
 website_entry.focus()
 
@@ -104,10 +111,13 @@ password_entry = tk.Entry(width=21)
 password_entry.grid(column=1, row=3, sticky="ew")
 
 # Buttons
+tk.Button(text="Search", width=13, command=search_password)\
+    .grid(column=2, row=1)
+
 tk.Button(text="Generate", command=generate_password)\
-    .grid(column=2, row=3, padx=(10, 0))
+    .grid(column=2, row=3)
 
 tk.Button(text="Add", width=36, command=save_password)\
-    .grid(column=0, row=4, columnspan=3, pady=(10, 0))
+    .grid(column=1, row=4, columnspan=2)
 
 window.mainloop()
