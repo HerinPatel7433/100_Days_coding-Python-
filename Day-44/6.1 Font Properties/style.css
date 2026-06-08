@@ -1,0 +1,24 @@
+.color{
+    color:coral
+}
+
+.font_size{
+    font-size: 2rem;
+}
+
+.font_weight{
+    font-weight: 900;
+}
+
+.font_family{
+    font-family: 'Cavent' cursive; 
+    font-weight: 400;
+}
+
+.text_align{
+    text-align: right;
+}
+
+html{
+    font-size: 30px;
+}
