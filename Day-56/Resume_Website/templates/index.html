@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ data.name }} - Resume</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="resume-container">
+        <header>
+            <img src="{{ url_for('static', filename='Herin_Prof.jpg') }}" alt="Herin Patel" class="profile-img">
+            <h1>{{ data.name }}</h1>
+            <h2>{{ data.title }}</h2>
+            <p>{{ data.university }} | {{ data.location }}</p>
+            
+            <div class="socials">
+                {% for social in data.socials %}
+                    <span class="badge social-badge">{{ social }}</span>
+                {% endfor %}
+            </div>
+        </header>
+
+        <section class="about">
+            <h3>About Me 💫</h3>
+            <p>{{ data.about }}</p>
+        </section>
+
+        <section class="specializations">
+            <h3>What I do 🚀</h3>
+            <ul>
+                {% for item in data.what_i_do %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="skills">
+            <h3>Tech Stack 💻</h3>
+            <div class="skill-container">
+                {% for skill in data.tech_stack %}
+                    <span class="badge skill-badge">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</body>
+</html>
