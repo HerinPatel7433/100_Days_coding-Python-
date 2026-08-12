@@ -1,7 +1,15 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import smtplib
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 posts = requests.get("https://api.npoint.io/4381e8f35f9ce20107b4").json()
+EMAIL = os.environ.get("EMAIL")
+PASSWORD = os.environ.get("PASSWORD")
+S_EMAIL = os.environ.get("S_EMAIL")
 
 app = Flask(__name__)
 
@@ -19,15 +27,27 @@ def show_post(index):
             requested_post = blog_post
     return render_template("post.html", post=requested_post)
 
-
 @app.route("/about")
 def about():
     return render_template("about.html")
 
-
-@app.route("/contact")
+@app.route("/contact", methods=["GET", "POST"])
 def contact():
-    return render_template("contact.html")
+    if request.method == "POST":
+        data = request.form
+        data = request.form
+        send_email(data["name"], data["email"], data["phone"], data["message"])
+        return render_template("contact.html", msg_sent=True)
+    return render_template("contact.html", msg_sent=False)
+
+
+def send_email(name, email, phone, message):
+    email_message = f"Subject:New Message\n\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage:{message}"
+    with smtplib.SMTP("smtp.gmail.com") as connection:
+        connection.starttls()
+        connection.login(EMAIL, PASSWORD)
+        connection.sendmail(EMAIL, S_EMAIL, email_message)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
